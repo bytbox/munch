@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Munch RSS Dashboard</title>
+<style type="text/css">
+* {
+
+}
+
+body {
+
+}
+
+#feedlist {
+
+}
+
+.feed {
+
+}
+
+.feed_name {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h1>Munch</h1>
+
+<div id="feedlist">
+{{range .Feeds}}
+<div class="feed">
+<div class="feed_name">{{.Info.Name}}</div>
+{{range .Items}}
+<div class="feed_item">
+<div class="feed_item_title">{{.Title}}</div>
+</div>
+{{end}}
+</div>
+{{end}}
+</div>
+
+<hr />
+<div class="copyright">
+Copyright &copy; 2011 Scott Lawrence &lt;<a href="mailto:bytbox@gmail.com">bytbox@gmail.com</a>&gt;
+</div>
+</body>
+</html>
+
