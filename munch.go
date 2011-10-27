@@ -20,6 +20,7 @@ type Configuration struct {
 type FeedInfo struct {
 	Name string
 	URL  string
+	Type string
 }
 
 type Feed struct {
@@ -37,7 +38,7 @@ type Item struct {
 	Read    bool
 }
 
-type FeedData struct {
+type RSSData struct {
 	Channel Channel
 }
 
@@ -45,10 +46,10 @@ type Channel struct {
 	Title       string
 	Link        string
 	Description string
-	Item        []ItemData
+	Item        []RSSItemData
 }
 
-type ItemData struct {
+type RSSItemData struct {
 	Title       string
 	Link        string
 	PubDate     string
@@ -86,8 +87,6 @@ func main() {
 		ReadFeeds()
 		<-ticks
 	}
-
-	<-make(chan int)
 }
 
 func InitTemplate() {
@@ -137,44 +136,53 @@ func WriteCache() {
 func ReadFeeds() {
 	log.Print("Updating feeds")
 	for _, feed := range Feeds {
-		url := feed.Info.URL
-		log.Print(url)
-		r, err := client.Get(url)
-		if err != nil {
-			log.Print("ERROR: ", err.String())
-		}
-		reader := r.Body
-		feedData := FeedData{}
-		err = xml.Unmarshal(reader, &feedData)
-		if err != nil {
-			log.Print("ERROR: ", err.String())
-		}
-		// now transform the XML into our internal data structure
-		changed := false
-		for _, itemData := range feedData.Channel.Item {
-			guid := itemData.GUID
-			_, ok := feed.Items[guid]
-			if !ok {
-				// GUID not found - add the item
-				changed = true
-				item := Item {
-					Title: itemData.Title,
-					GUID: guid,
-					URL: itemData.Link,
-					Date: itemData.PubDate,
-					Desc: itemData.Description,
-					Content: itemData.Content,
-					Read: false,
-				}
-				feed.Items[guid] = item
-			}
-		}
-		if (changed) {
-			UpdatePage()
-			// TODO run some commands from Config?
+		switch (feed.Info.Type) {
+		case "RSS":
+			readRSS(feed)
+		default:
+			log.Print("Ignoring unknown feed of type ", feed.Info.Type)
 		}
 	}
 	log.Print("Done")
+}
+
+func readRSS(feed Feed) {
+	url := feed.Info.URL
+	log.Print(url)
+	r, err := client.Get(url)
+	if err != nil {
+		log.Print("ERROR: ", err.String())
+	}
+	reader := r.Body
+	feedData := RSSData{}
+	err = xml.Unmarshal(reader, &feedData)
+	if err != nil {
+		log.Print("ERROR: ", err.String())
+	}
+	// now transform the XML into our internal data structure
+	changed := false
+	for _, itemData := range feedData.Channel.Item {
+		guid := itemData.GUID
+		_, ok := feed.Items[guid]
+		if !ok {
+			// GUID not found - add the item
+			changed = true
+			item := Item {
+				Title: itemData.Title,
+				GUID: guid,
+				URL: itemData.Link,
+				Date: itemData.PubDate,
+				Desc: itemData.Description,
+				Content: itemData.Content,
+				Read: false,
+			}
+			feed.Items[guid] = item
+		}
+	}
+	if (changed) {
+		UpdatePage()
+		// TODO run some commands from Config?
+	}
 }
 
 func UpdatePage() {
