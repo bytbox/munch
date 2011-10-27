@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"http"
 	"json"
@@ -59,32 +60,41 @@ type RSSItemData struct {
 }
 
 type TemplateData struct {
-	Config Configuration
+	Config *Configuration
 	Feeds  map[string]Feed
 }
+
+const (
+	DoUpdate = iota
+	GetContent
+)
 
 var (
 	Config        Configuration
 	Feeds         map[string]Feed
-	TmplData      TemplateData
 
 	page_template template.Template
-	page_content  string
 	client        http.Client
+	updates       chan int
+	content       chan string
 )
 
 func main() {
 	flag.Parse()
 
+	updates = make(chan int)
+	content = make(chan string)
+
 	InitTemplate()
 	ReadConfig()
 	InitCache()
+	go HandleUpdates()
 	WriteCache()
 	go RunHTTPServer()
 
 	ticks := time.Tick(1e9 * Config.UpdateInterval)
 	for {
-		ReadFeeds()
+		go ReadFeeds()
 		<-ticks
 	}
 }
@@ -125,6 +135,31 @@ func InitCache() {
 			feed.Info = info
 			feed.Items = make(map[string]Item)
 			Feeds[name] = feed
+		}
+	}
+}
+
+func HandleUpdates() {
+	pageBuffer := new(bytes.Buffer)
+	tmplData := TemplateData{}
+	tmplData.Feeds = Feeds
+	tmplData.Config = &Config
+	err := page_template.Execute(pageBuffer, tmplData)
+	if err != nil {
+		log.Print("ERROR: ", err.String())
+	}
+	for u := range updates {
+		switch u {
+		case DoUpdate:
+			pageBuffer = new(bytes.Buffer)
+			err = page_template.Execute(pageBuffer, tmplData)
+			if err != nil {
+				log.Print("ERROR: ", err.String())
+			}
+		case GetContent:
+			content <- pageBuffer.String()
+		default:
+			panic("Undefined request to updater")
 		}
 	}
 }
@@ -196,7 +231,7 @@ func readRDF(feed Feed) {
 }
 
 func UpdatePage() {
-	// TODO create a write on page_content
+	updates <- DoUpdate
 }
 
 func RunHTTPServer() {
@@ -209,11 +244,7 @@ func RunHTTPServer() {
 }
 
 func HTTPHandler(w http.ResponseWriter, req *http.Request) {
-	TmplData.Feeds = Feeds
-	TmplData.Config = Config
-	err := page_template.Execute(w, TmplData)
-	if err != nil {
-		log.Print("ERROR: ", err.String())
-	}
+	updates <- GetContent
+	w.Write([]byte(<-content))
 }
 
