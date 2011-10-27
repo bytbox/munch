@@ -152,12 +152,14 @@ func readRSS(feed Feed) {
 	r, err := client.Get(url)
 	if err != nil {
 		log.Print("ERROR: ", err.String())
+		return
 	}
 	reader := r.Body
 	feedData := RSSData{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {
 		log.Print("ERROR: ", err.String())
+		return
 	}
 	// now transform the XML into our internal data structure
 	changed := false
@@ -183,6 +185,14 @@ func readRSS(feed Feed) {
 		UpdatePage()
 		// TODO run some commands from Config?
 	}
+}
+
+func readAtom(feed Feed) {
+
+}
+
+func readRDF(feed Feed) {
+
 }
 
 func UpdatePage() {
