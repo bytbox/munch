@@ -7,7 +7,14 @@
 }
 
 body {
+	margin: 0px;
+	padding: 0px;
+}
 
+#container {
+	width: 720px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #feedlist {
@@ -21,9 +28,26 @@ body {
 .feed_name {
 	font-weight: bold;
 }
+
+#footer {
+	margin-top: 1em;
+	border-top: 1px solid #ccc;
+}
+
+#copyright {
+	font-size: 80%;
+}
 </style>
+
+<script language="javascript">
+
+</script>
 </head>
+
 <body>
+
+<div id="container">
+
 <h1>Munch</h1>
 
 <div id="feedlist">
@@ -39,9 +63,13 @@ body {
 {{end}}
 </div>
 
-<hr />
-<div class="copyright">
-Copyright &copy; 2011 Scott Lawrence &lt;<a href="mailto:bytbox@gmail.com">bytbox@gmail.com</a>&gt;
+<div id="footer">
+<span id="copyright">
+
+Munch Copyright &copy; 2011 Scott Lawrence &lt;<a href="mailto:bytbox@gmail.com">bytbox@gmail.com</a>&gt;
+
+</span>
+</div>
 </div>
 </body>
 </html>
