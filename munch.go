@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"flag"
 	"http"
 	"json"
@@ -26,6 +27,7 @@ type FeedInfo struct {
 
 type Feed struct {
 	Info  FeedInfo
+	ID    string
 	Items map[string]Item
 }
 
@@ -37,6 +39,7 @@ type Item struct {
 	Desc    string
 	Content string
 	Read    bool
+	ID	string
 }
 
 type RSSData struct {
@@ -133,6 +136,7 @@ func InitCache() {
 			log.Print("New Feed: ", name)
 			feed := Feed{}
 			feed.Info = info
+			feed.ID = hex.EncodeToString([]byte(name))
 			feed.Items = make(map[string]Item)
 			Feeds[name] = feed
 		}
@@ -168,17 +172,28 @@ func WriteCache() {
 	// TODO
 }
 
+type FeedReader interface {
+
+}
+
 func ReadFeeds() {
 	log.Print("Updating feeds")
 	for _, feed := range Feeds {
 		switch (feed.Info.Type) {
 		case "RSS":
 			readRSS(feed)
+		case "Atom":
+		case "RDF":
 		default:
 			log.Print("Ignoring unknown feed of type ", feed.Info.Type)
 		}
 	}
 	log.Print("Done")
+}
+
+// TODO handle this gracefully
+func readFeed(feed Feed, reader FeedReader) {
+
 }
 
 func readRSS(feed Feed) {
@@ -200,6 +215,7 @@ func readRSS(feed Feed) {
 	changed := false
 	for _, itemData := range feedData.Channel.Item {
 		guid := itemData.GUID
+		id := hex.EncodeToString([]byte(feed.Info.Name + guid))
 		_, ok := feed.Items[guid]
 		if !ok {
 			// GUID not found - add the item
@@ -212,26 +228,49 @@ func readRSS(feed Feed) {
 				Desc: itemData.Description,
 				Content: itemData.Content,
 				Read: false,
+				ID: id,
 			}
 			feed.Items[guid] = item
 		}
 	}
 	if (changed) {
-		UpdatePage()
+		updates <- DoUpdate
 		// TODO run some commands from Config?
 	}
 }
 
 func readAtom(feed Feed) {
+	url := feed.Info.URL
+	log.Print(url)
+	r, err := client.Get(url)
+	if err != nil {
+		log.Print("ERROR: ", err.String())
+	}
+	_ = r.Body
 
+	changed := false
+
+	if (changed) {
+		updates <- DoUpdate
+		// TODO
+	}
 }
 
 func readRDF(feed Feed) {
+	url := feed.Info.URL
+	log.Print(url)
+	r, err := client.Get(url)
+	if err != nil {
+		log.Print("ERROR: ", err.String())
+	}
+	_ = r.Body
 
-}
+	changed := false
 
-func UpdatePage() {
-	updates <- DoUpdate
+	if (changed) {
+		updates <- DoUpdate
+		// TODO
+	}
 }
 
 func RunHTTPServer() {
