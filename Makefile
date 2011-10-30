@@ -3,7 +3,7 @@ include ${GOROOT}/src/Make.inc
 TXT2GO = ./txt2go.sh
 
 TARG = munch
-GOFILES = munch.go page.go rss.go rdf.go atom.go
+GOFILES = munch.go page.go rss.go rdf.go atom.go httpd.go
 CLEANFILES = page.go
 
 include ${GOROOT}/src/Make.cmd
