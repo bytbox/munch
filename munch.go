@@ -11,7 +11,6 @@ import (
 	"path"
 	"template"
 	"time"
-	"xml"
 )
 
 type Configuration struct {
@@ -32,6 +31,7 @@ type Feed struct {
 }
 
 type Item struct {
+	Feed	*Feed
 	Title   string
 	GUID    string
 	URL     string
@@ -42,29 +42,10 @@ type Item struct {
 	ID	string
 }
 
-type RSSData struct {
-	Channel Channel
-}
-
-type Channel struct {
-	Title       string
-	Link        string
-	Description string
-	Item        []RSSItemData
-}
-
-type RSSItemData struct {
-	Title       string
-	Link        string
-	PubDate     string
-	GUID        string
-	Description string
-	Content     string
-}
-
 type TemplateData struct {
 	Config *Configuration
-	Feeds  map[string]Feed
+	Feeds  *map[string]Feed
+	Unread []Item
 }
 
 const (
@@ -146,7 +127,7 @@ func InitCache() {
 func HandleUpdates() {
 	pageBuffer := new(bytes.Buffer)
 	tmplData := TemplateData{}
-	tmplData.Feeds = Feeds
+	tmplData.Feeds = &Feeds
 	tmplData.Config = &Config
 	err := page_template.Execute(pageBuffer, tmplData)
 	if err != nil {
@@ -155,6 +136,7 @@ func HandleUpdates() {
 	for u := range updates {
 		switch u {
 		case DoUpdate:
+			tmplData.Unread = getUnread(tmplData.Feeds)
 			pageBuffer = new(bytes.Buffer)
 			err = page_template.Execute(pageBuffer, tmplData)
 			if err != nil {
@@ -166,6 +148,10 @@ func HandleUpdates() {
 			panic("Undefined request to updater")
 		}
 	}
+}
+
+func getUnread(feeds *map[string]Feed) (items []Item) {
+	return
 }
 
 func WriteCache() {
@@ -194,83 +180,6 @@ func ReadFeeds() {
 // TODO handle this gracefully
 func readFeed(feed Feed, reader FeedReader) {
 
-}
-
-func readRSS(feed Feed) {
-	url := feed.Info.URL
-	log.Print(url)
-	r, err := client.Get(url)
-	if err != nil {
-		log.Print("ERROR: ", err.String())
-		return
-	}
-	reader := r.Body
-	feedData := RSSData{}
-	err = xml.Unmarshal(reader, &feedData)
-	if err != nil {
-		log.Print("ERROR: ", err.String())
-		return
-	}
-	// now transform the XML into our internal data structure
-	changed := false
-	for _, itemData := range feedData.Channel.Item {
-		guid := itemData.GUID
-		id := hex.EncodeToString([]byte(feed.Info.Name + guid))
-		_, ok := feed.Items[guid]
-		if !ok {
-			// GUID not found - add the item
-			changed = true
-			item := Item {
-				Title: itemData.Title,
-				GUID: guid,
-				URL: itemData.Link,
-				Date: itemData.PubDate,
-				Desc: itemData.Description,
-				Content: itemData.Content,
-				Read: false,
-				ID: id,
-			}
-			feed.Items[guid] = item
-		}
-	}
-	if (changed) {
-		updates <- DoUpdate
-		// TODO run some commands from Config?
-	}
-}
-
-func readAtom(feed Feed) {
-	url := feed.Info.URL
-	log.Print(url)
-	r, err := client.Get(url)
-	if err != nil {
-		log.Print("ERROR: ", err.String())
-	}
-	_ = r.Body
-
-	changed := false
-
-	if (changed) {
-		updates <- DoUpdate
-		// TODO
-	}
-}
-
-func readRDF(feed Feed) {
-	url := feed.Info.URL
-	log.Print(url)
-	r, err := client.Get(url)
-	if err != nil {
-		log.Print("ERROR: ", err.String())
-	}
-	_ = r.Body
-
-	changed := false
-
-	if (changed) {
-		updates <- DoUpdate
-		// TODO
-	}
 }
 
 func RunHTTPServer() {
