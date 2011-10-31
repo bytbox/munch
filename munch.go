@@ -173,7 +173,7 @@ func (is ItemList) Len() int {
 func (is ItemList) Less(i, j int) bool {
 	a := is[i]
 	b := is[j]
-	return a.Date.Seconds() < b.Date.Seconds()
+	return a.Date.Seconds() > b.Date.Seconds()
 }
 
 func (is ItemList) Swap(i, j int) {

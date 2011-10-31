@@ -83,7 +83,7 @@ body {
 {{range .Unread}}
 <div class="unreaditem" id="u{{.ID}}">
 <div class="unreaditem_title">
-{{.Title}}
+<a href="{{.URL}}" target="_blank" onclick="window.location='/open/{{.ID}}'">{{.Title}}</a>
 </div>
 <div class="unreaditem_date">
 on {{.Date}}
@@ -102,10 +102,14 @@ in <a href="{{.Feed.Info.MainURL}}" target="_blank">{{.Feed.Info.Name}}</a>
 <div id="feedlist">
 {{range .Feeds}}
 <div class="feed" id="f{{.ID}}">
-<div class="feed_name">{{.Info.Name}}</div>
+<div class="feed_name">
+<a href="{{.Info.MainURL}}" target="_blank">{{.Info.Name}}</a>
+</div>
 {{range .Items}}
 <div class="feed_item" id="f{{.ID}}">
-<div class="feed_item_title">{{.Title}}</div>
+<div class="feed_item_title">
+<a href="{{.URL}}" target="_blank" onclick="window.location='/open/{{.ID}}'">{{.Title}}</a>
+</div>
 </div>
 {{end}}
 </div>
