@@ -50,12 +50,13 @@ func readRSS(feed Feed) {
 		if !ok {
 			// GUID not found - add the item
 			changed = true
+			t := parseTime(itemData.PubDate)
 			item := Item {
 				Feed: &feed,
 				Title: itemData.Title,
 				GUID: guid,
 				URL: itemData.Link,
-				Date: itemData.PubDate,
+				Date: *t,
 				Desc: itemData.Description,
 				Content: itemData.Content,
 				Read: false,

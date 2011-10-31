@@ -9,8 +9,10 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
 	"template"
 	"time"
+	"url"
 )
 
 type Configuration struct {
@@ -19,9 +21,10 @@ type Configuration struct {
 }
 
 type FeedInfo struct {
-	Name string
-	URL  string
-	Type string
+	Name    string
+	URL     string
+	MainURL string
+	Type    string
 }
 
 type Feed struct {
@@ -35,7 +38,7 @@ type Item struct {
 	Title   string
 	GUID    string
 	URL     string
-	Date    string // TODO this may need to be a struct
+	Date    time.Time
 	Desc    string
 	Content string
 	Read    bool
@@ -119,6 +122,13 @@ func InitCache() {
 			feed.Info = info
 			feed.ID = hex.EncodeToString([]byte(name))
 			feed.Items = make(map[string]Item)
+			if feed.Info.MainURL == "" {
+				u, err := url.Parse(feed.Info.URL)
+				if err != nil {
+					panic(err)
+				}
+				feed.Info.MainURL = "http://" + u.Host
+			}
 			Feeds[name] = feed
 		}
 	}
@@ -150,8 +160,33 @@ func HandleUpdates() {
 	}
 }
 
-func getUnread(feeds *map[string]Feed) (items []Item) {
-	return
+type ItemList []Item
+
+func (is ItemList) Len() int {
+	return len(is)
+}
+
+func (is ItemList) Less(i, j int) bool {
+	a := is[i]
+	b := is[j]
+	return a.Date.Seconds() < b.Date.Seconds()
+}
+
+func (is ItemList) Swap(i, j int) {
+	is[i], is[j] = is[j], is[i]
+}
+
+func getUnread(feeds *map[string]Feed) []Item {
+	items := ItemList{}
+	for _, feed := range *feeds {
+		for _, item := range feed.Items {
+			if !item.Read {
+				items = append(items, item)
+			}
+		}
+	}
+	sort.Sort(items)
+	return items
 }
 
 func WriteCache() {

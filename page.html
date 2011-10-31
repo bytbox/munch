@@ -21,6 +21,22 @@ body {
 
 }
 
+.unreaditem {
+	padding-bottom: .5em;
+}
+
+.unreaditem_title {
+
+}
+
+.unreaditem_date {
+	float: right;
+}
+
+.unreaditem_feed {
+	padding-left: 1em;
+}
+
 #feedlist {
 
 }
@@ -65,6 +81,17 @@ body {
 <div id="unreadlist">
 
 {{range .Unread}}
+<div class="unreaditem" id="u{{.ID}}">
+<div class="unreaditem_title">
+{{.Title}}
+</div>
+<div class="unreaditem_date">
+on {{.Date}}
+</div>
+<div class="unreaditem_feed">
+in <a href="{{.Feed.Info.MainURL}}" target="_blank">{{.Feed.Info.Name}}</a>
+</div>
+</div>
 
 {{end}}
 
@@ -74,10 +101,10 @@ body {
 
 <div id="feedlist">
 {{range .Feeds}}
-<div class="feed" id="{{.ID}}">
+<div class="feed" id="f{{.ID}}">
 <div class="feed_name">{{.Info.Name}}</div>
 {{range .Items}}
-<div class="feed_item" id="{{.ID}}">
+<div class="feed_item" id="f{{.ID}}">
 <div class="feed_item_title">{{.Title}}</div>
 </div>
 {{end}}
