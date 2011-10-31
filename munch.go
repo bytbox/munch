@@ -66,6 +66,10 @@ var (
 	content       chan string
 )
 
+type FeedReader interface {
+
+}
+
 func main() {
 	flag.Parse()
 
@@ -191,10 +195,6 @@ func getUnread(feeds *map[string]Feed) []Item {
 
 func WriteCache() {
 	// TODO
-}
-
-type FeedReader interface {
-
 }
 
 func ReadFeeds() {
