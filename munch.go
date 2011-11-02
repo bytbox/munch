@@ -100,12 +100,12 @@ func ReadConfig() {
 	// Read config from ~/.munchrc
 	file, err := os.Open(path.Join(os.Getenv("HOME"),".munchrc"))
 	if err != nil {
-		log.Fatal(err.String())
+		log.Fatal(err.Error())
 	}
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&Config)
 	if err != nil {
-		log.Fatal(err.String())
+		log.Fatal(err.Error())
 	}
 }
 
@@ -145,7 +145,7 @@ func HandleUpdates() {
 	tmplData.Config = &Config
 	err := page_template.Execute(pageBuffer, tmplData)
 	if err != nil {
-		log.Print("ERROR: ", err.String())
+		log.Print("ERROR: ", err.Error())
 	}
 	for u := range updates {
 		switch u {
@@ -154,7 +154,7 @@ func HandleUpdates() {
 			pageBuffer = new(bytes.Buffer)
 			err = page_template.Execute(pageBuffer, tmplData)
 			if err != nil {
-				log.Print("ERROR: ", err.String())
+				log.Print("ERROR: ", err.Error())
 			}
 		case GetContent:
 			content <- pageBuffer.String()

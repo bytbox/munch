@@ -9,7 +9,7 @@ func readAtom(feed Feed) {
 	log.Print(url)
 	r, err := client.Get(url)
 	if err != nil {
-		log.Print("ERROR: ", err.String())
+		log.Print("ERROR: ", err.Error())
 	}
 	_ = r.Body
 

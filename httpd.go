@@ -12,7 +12,7 @@ func RunHTTPServer() {
 	http.HandleFunc("/about", AboutHandler)
 	err := http.ListenAndServe("localhost:8090", nil)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err.String())
+		log.Fatal("ListenAndServe: ", err.Error())
 	}
 }
 

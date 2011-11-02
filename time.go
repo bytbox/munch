@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"time"
 )
 
@@ -12,7 +11,7 @@ var formats = []string{
 
 func parseTime(s string) (t *time.Time) {
 	success := false
-	var err os.Error
+	var err error
 	for _, fmt := range formats {
 		t, err = time.Parse(fmt, s)
 		if err == nil {

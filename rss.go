@@ -31,14 +31,14 @@ func readRSS(feed Feed) {
 	log.Print(url)
 	r, err := client.Get(url)
 	if err != nil {
-		log.Print("ERROR: ", err.String())
+		log.Print("ERROR: ", err.Error())
 		return
 	}
 	reader := r.Body
 	feedData := RSSData{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {
-		log.Print("ERROR: ", err.String())
+		log.Print("ERROR: ", err.Error())
 		return
 	}
 	// now transform the XML into our internal data structure
