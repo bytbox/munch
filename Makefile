@@ -4,7 +4,7 @@ TXT2GO = ./txt2go.sh
 
 TARG = munch
 GOFILES = munch.go page.go rss.go rdf.go atom.go httpd.go time.go about.go
-CLEANFILES = page.go
+CLEANFILES = page.go about.go
 
 include ${GOROOT}/src/Make.cmd
 
