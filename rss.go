@@ -51,24 +51,22 @@ func readRSS(feed *Feed) {
 			// GUID not found - add the item
 			changed = true
 			t := parseTime(itemData.PubDate)
-			item := &Item {
-				Feed: feed,
-				Title: itemData.Title,
-				GUID: guid,
-				URL: itemData.Link,
-				Date: *t,
-				Desc: itemData.Description,
+			item := &Item{
+				Feed:    feed,
+				Title:   itemData.Title,
+				GUID:    guid,
+				URL:     itemData.Link,
+				Date:    *t,
+				Desc:    itemData.Description,
 				Content: itemData.Content,
-				Read: false,
-				ID: id,
+				Read:    false,
+				ID:      id,
 			}
 			feed.Items[guid] = item
 		}
 	}
-	if (changed) {
+	if changed {
 		updates <- DoUpdate
 		// TODO run some commands from Config?
 	}
 }
-
-

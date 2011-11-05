@@ -24,4 +24,3 @@ func parseTime(s string) (t *time.Time) {
 	}
 	return
 }
-

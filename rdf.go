@@ -15,10 +15,8 @@ func readRDF(feed *Feed) {
 
 	changed := false
 
-	if (changed) {
+	if changed {
 		updates <- DoUpdate
 		// TODO
 	}
 }
-
-

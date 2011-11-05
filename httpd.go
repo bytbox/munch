@@ -52,7 +52,7 @@ func OpenHandler(w http.ResponseWriter, req *http.Request) {
 	item.Read = true
 
 	// perform updates
-	updates<-DoUpdate
+	updates <- DoUpdate
 
 	// redirect to /
 	http.Redirect(w, req, "/", http.StatusFound)
@@ -61,4 +61,3 @@ func OpenHandler(w http.ResponseWriter, req *http.Request) {
 func AboutHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(about_string))
 }
-

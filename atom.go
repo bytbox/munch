@@ -14,7 +14,7 @@ type AtomFeed struct {
 
 type AtomItemData struct {
 	ID      string
-	Link	AtomLink
+	Link    AtomLink
 	Title   string
 	Updated string
 	Summary string
@@ -47,21 +47,21 @@ func readAtom(feed *Feed) {
 		if !ok {
 			changed = true
 			t := parseTime(itemData.Updated)
-			item := &Item {
-				Feed: feed,
+			item := &Item{
+				Feed:  feed,
 				Title: itemData.Title,
-				GUID: uid,
-				URL: itemData.Link.Href,
-				Date: *t,
-				Desc: itemData.Summary,
-				Read: false,
-				ID: id,
+				GUID:  uid,
+				URL:   itemData.Link.Href,
+				Date:  *t,
+				Desc:  itemData.Summary,
+				Read:  false,
+				ID:    id,
 			}
 			feed.Items[uid] = item
 		}
 	}
 
-	if (changed) {
+	if changed {
 		updates <- DoUpdate
 		// TODO run some commands from Config?
 	}

@@ -34,7 +34,7 @@ type Feed struct {
 }
 
 type Item struct {
-	Feed	*Feed
+	Feed    *Feed
 	Title   string
 	GUID    string
 	URL     string
@@ -42,7 +42,7 @@ type Item struct {
 	Desc    string
 	Content string
 	Read    bool
-	ID	string
+	ID      string
 }
 
 type TemplateData struct {
@@ -57,8 +57,8 @@ const (
 )
 
 var (
-	Config        Configuration
-	Feeds         map[string]*Feed
+	Config Configuration
+	Feeds  map[string]*Feed
 
 	page_template template.Template
 	client        http.Client
@@ -98,7 +98,7 @@ func InitTemplate() {
 func ReadConfig() {
 	log.Print("Reading Config")
 	// Read config from ~/.munchrc
-	file, err := os.Open(path.Join(os.Getenv("HOME"),".munchrc"))
+	file, err := os.Open(path.Join(os.Getenv("HOME"), ".munchrc"))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -200,7 +200,7 @@ func WriteCache() {
 func ReadFeeds() {
 	log.Print("Updating feeds")
 	for _, feed := range Feeds {
-		switch (feed.Info.Type) {
+		switch feed.Info.Type {
 		case "RSS":
 			readRSS(feed)
 		case "Atom":
@@ -218,4 +218,3 @@ func ReadFeeds() {
 func readFeed(feed Feed, reader FeedReader) {
 
 }
-

@@ -13,3 +13,6 @@ page.go: page.html ${TXT2GO}
 about.go: about.html ${TXT2GO}
 	${TXT2GO} about_string < about.html > $@
 
+fmt:
+	gofmt -w *.go
+
