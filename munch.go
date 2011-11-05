@@ -207,6 +207,7 @@ func ReadFeeds() {
 			readAtom(feed)
 		case "RDF":
 			readRDF(feed)
+			log.Print("RDF feeds unsupported")
 		default:
 			log.Print("Ignoring unknown feed of type ", feed.Info.Type)
 		}
