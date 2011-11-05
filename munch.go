@@ -30,7 +30,7 @@ type FeedInfo struct {
 type Feed struct {
 	Info  FeedInfo
 	ID    string
-	Items map[string]Item
+	Items map[string]*Item
 }
 
 type Item struct {
@@ -47,8 +47,8 @@ type Item struct {
 
 type TemplateData struct {
 	Config *Configuration
-	Feeds  *map[string]Feed
-	Unread []Item
+	Feeds  *map[string]*Feed
+	Unread []*Item
 }
 
 const (
@@ -58,7 +58,7 @@ const (
 
 var (
 	Config        Configuration
-	Feeds         map[string]Feed
+	Feeds         map[string]*Feed
 
 	page_template template.Template
 	client        http.Client
@@ -110,7 +110,7 @@ func ReadConfig() {
 }
 
 func InitCache() {
-	Feeds = make(map[string]Feed)
+	Feeds = make(map[string]*Feed)
 	// Ensure the cache directory exists
 	cachePath := path.Join(os.Getenv("HOME"), ".munch.d", "cache")
 	os.MkdirAll(cachePath, 0700)
@@ -122,10 +122,10 @@ func InitCache() {
 		if file != nil {
 		} else {
 			log.Print("New Feed: ", name)
-			feed := Feed{}
+			feed := &Feed{}
 			feed.Info = info
 			feed.ID = hex.EncodeToString([]byte(name))
-			feed.Items = make(map[string]Item)
+			feed.Items = make(map[string]*Item)
 			if feed.Info.MainURL == "" {
 				u, err := url.Parse(feed.Info.URL)
 				if err != nil {
@@ -164,7 +164,7 @@ func HandleUpdates() {
 	}
 }
 
-type ItemList []Item
+type ItemList []*Item
 
 func (is ItemList) Len() int {
 	return len(is)
@@ -180,7 +180,7 @@ func (is ItemList) Swap(i, j int) {
 	is[i], is[j] = is[j], is[i]
 }
 
-func getUnread(feeds *map[string]Feed) []Item {
+func getUnread(feeds *map[string]*Feed) []*Item {
 	items := ItemList{}
 	for _, feed := range *feeds {
 		for _, item := range feed.Items {

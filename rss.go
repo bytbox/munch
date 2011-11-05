@@ -26,7 +26,7 @@ type RSSItemData struct {
 	Content     string
 }
 
-func readRSS(feed Feed) {
+func readRSS(feed *Feed) {
 	url := feed.Info.URL
 	log.Print(url)
 	r, err := client.Get(url)
@@ -51,8 +51,8 @@ func readRSS(feed Feed) {
 			// GUID not found - add the item
 			changed = true
 			t := parseTime(itemData.PubDate)
-			item := Item {
-				Feed: &feed,
+			item := &Item {
+				Feed: feed,
 				Title: itemData.Title,
 				GUID: guid,
 				URL: itemData.Link,

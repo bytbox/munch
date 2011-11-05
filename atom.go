@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-func readAtom(feed Feed) {
+func readAtom(feed *Feed) {
 	url := feed.Info.URL
 	log.Print(url)
 	r, err := client.Get(url)

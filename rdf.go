@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-func readRDF(feed Feed) {
+func readRDF(feed *Feed) {
 	url := feed.Info.URL
 	log.Print(url)
 	r, err := client.Get(url)
