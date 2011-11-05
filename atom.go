@@ -8,14 +8,20 @@ import (
 
 type AtomFeed struct {
 	Title string
+	Link  AtomLink
 	Entry []AtomItemData
 }
 
 type AtomItemData struct {
 	ID      string
+	Link	AtomLink
 	Title   string
 	Updated string
 	Summary string
+}
+
+type AtomLink struct {
+	Href string `xml:"attr"`
 }
 
 func readAtom(feed *Feed) {
@@ -45,7 +51,7 @@ func readAtom(feed *Feed) {
 				Feed: feed,
 				Title: itemData.Title,
 				GUID: uid,
-				URL: "",
+				URL: itemData.Link.Href,
 				Date: *t,
 				Desc: itemData.Summary,
 				Read: false,
