@@ -204,7 +204,9 @@ func ReadFeeds() {
 		case "RSS":
 			readRSS(feed)
 		case "Atom":
+			readAtom(feed)
 		case "RDF":
+			readRDF(feed)
 		default:
 			log.Print("Ignoring unknown feed of type ", feed.Info.Type)
 		}

@@ -4,6 +4,18 @@ import (
 	"log"
 )
 
+type AtomData struct {
+
+}
+
+type AtomFeed struct {
+
+}
+
+type AtomItemData struct {
+
+}
+
 func readAtom(feed *Feed) {
 	url := feed.Info.URL
 	log.Print(url)
