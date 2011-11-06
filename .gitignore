@@ -5,3 +5,4 @@
 *.o
 munch
 page.go
+about.go

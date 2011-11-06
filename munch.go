@@ -80,7 +80,6 @@ func main() {
 	ReadConfig()
 	InitCache()
 	go HandleUpdates()
-	WriteCache()
 	go RunHTTPServer()
 
 	ticks := time.Tick(1e9 * Config.UpdateInterval)
@@ -156,6 +155,7 @@ func HandleUpdates() {
 			if err != nil {
 				log.Print("ERROR: ", err.Error())
 			}
+			writeCache()
 		case GetContent:
 			content <- pageBuffer.String()
 		default:
@@ -193,7 +193,7 @@ func getUnread(feeds *map[string]*Feed) []*Item {
 	return items
 }
 
-func WriteCache() {
+func writeCache() {
 	// TODO
 }
 
