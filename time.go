@@ -7,6 +7,7 @@ import (
 var formats = []string{
 	time.RFC1123Z,
 	time.RFC1123,
+	time.RFC3339,
 }
 
 func parseTime(s string) (t *time.Time) {
