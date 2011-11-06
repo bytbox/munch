@@ -1,8 +1,10 @@
 #!/bin/sh
 
-echo "package main"
-echo
-echo -n "var $1 = \`"
+ECHO=/bin/echo
+
+$ECHO "package main"
+$ECHO
+$ECHO -n "var $1 = \`"
 cat
-echo "\`"
+$ECHO "\`"
 
