@@ -16,6 +16,10 @@ import (
 	"url"
 )
 
+const (
+	version = `0.1`
+)
+
 type Configuration struct {
 	UpdateInterval int64
 	Feeds          []FeedInfo
