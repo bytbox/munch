@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"http"
+	"io/ioutil"
 	"json"
 	"log"
 	"os"
@@ -34,7 +35,7 @@ type Feed struct {
 }
 
 type Item struct {
-	Feed    *Feed
+	Feed    *Feed `json:"-"`
 	Title   string
 	GUID    string
 	URL     string
@@ -80,6 +81,7 @@ func main() {
 	ReadConfig()
 	InitCache()
 	go HandleUpdates()
+	updates <- DoUpdate
 	go RunHTTPServer()
 
 	ticks := time.Tick(1e9 * Config.UpdateInterval)
@@ -118,21 +120,32 @@ func InitCache() {
 		name := info.Name
 		fPath := path.Join(cachePath, name)
 		file, _ := os.Open(fPath)
+		feed := &Feed{}
 		if file != nil {
+			log.Print("Loading: ", name)
+			decoder := json.NewDecoder(file)
+			err := decoder.Decode(feed)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+			for _, item := range feed.Items {
+				item.Feed = feed
+			}
+			feed.Info = info
+			Feeds[name] = feed
 		} else {
 			log.Print("New Feed: ", name)
-			feed := &Feed{}
 			feed.Info = info
 			feed.ID = hex.EncodeToString([]byte(name))
 			feed.Items = make(map[string]*Item)
-			if feed.Info.MainURL == "" {
-				u, err := url.Parse(feed.Info.URL)
-				if err != nil {
-					panic(err)
-				}
-				feed.Info.MainURL = "http://" + u.Host
-			}
 			Feeds[name] = feed
+		}
+		if feed.Info.MainURL == "" {
+			u, err := url.Parse(feed.Info.URL)
+			if err != nil {
+				panic(err)
+			}
+			feed.Info.MainURL = "http://" + u.Host
 		}
 	}
 }
@@ -194,7 +207,22 @@ func getUnread(feeds *map[string]*Feed) []*Item {
 }
 
 func writeCache() {
-	// TODO
+	cachePath := path.Join(os.Getenv("HOME"), ".munch.d", "cache")
+	os.MkdirAll(cachePath, 0700)
+	for _, info := range Config.Feeds {
+		name := info.Name
+		fPath := path.Join(cachePath, name)
+		js, err := json.MarshalIndent(Feeds[name], "", "  ")
+		if err != nil {
+			log.Print("ERR: ", err)
+			continue
+		}
+		err = ioutil.WriteFile(fPath, []byte(js), 0600)
+		if err != nil {
+			log.Print("ERR: ", err)
+			continue
+		}
+	}
 }
 
 func ReadFeeds() {
