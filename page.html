@@ -76,7 +76,7 @@ body {
 
 <div id="container">
 
-<h2>Unread</h2>
+<h2>Unread ({{.Unread | len}})</h2>
 
 <div id="unreadlist">
 
@@ -84,6 +84,7 @@ body {
 <div class="unreaditem" id="u{{.ID}}">
 <div class="unreaditem_title">
 <a href="{{.URL}}" target="_blank" onclick="window.location='/open/{{.Feed.ID}}/{{.ID}}'">{{.Title}}</a>
+(<a href="/open/{{.Feed.ID}}/{{.ID}}" style="float: right">Mark read</a>)
 </div>
 <div class="unreaditem_date">
 on {{.Date}}
