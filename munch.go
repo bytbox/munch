@@ -3,17 +3,17 @@ package main
 import (
 	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
-	"http"
 	"io/ioutil"
-	"json"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"sort"
-	"template"
+	"text/template"
 	"time"
-	"url"
 )
 
 const (

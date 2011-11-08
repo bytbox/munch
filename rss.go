@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/hex"
+	"encoding/xml"
 	"log"
-	"xml"
 )
 
 type RSSData struct {
