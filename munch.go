@@ -126,7 +126,6 @@ func InitCache() {
 		file, _ := os.Open(fPath)
 		feed := &Feed{}
 		if file != nil {
-			log.Print("Loading: ", name)
 			decoder := json.NewDecoder(file)
 			err := decoder.Decode(feed)
 			if err != nil {

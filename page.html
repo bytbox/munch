@@ -84,7 +84,7 @@ body {
 <div class="unreaditem" id="u{{.ID}}">
 <div class="unreaditem_title">
 <a href="{{.URL}}" target="_blank" onclick="window.location='/open/{{.Feed.ID}}/{{.ID}}'">{{.Title}}</a>
-(<a href="/open/{{.Feed.ID}}/{{.ID}}" style="float: right">Mark read</a>)
+<span style="float: right">(<a href="/open/{{.Feed.ID}}/{{.ID}}">Mark read</a>)</span>
 </div>
 <div class="unreaditem_date">
 on {{.Date}}

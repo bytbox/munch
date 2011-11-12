@@ -28,17 +28,16 @@ type RSSItemData struct {
 
 func readRSS(feed *Feed) {
 	url := feed.Info.URL
-	log.Print(url)
 	r, err := client.Get(url)
 	if err != nil {
-		log.Print("ERROR: ", err.Error())
+		log.Print("ERROR fetching ", url, ": ", err.Error())
 		return
 	}
 	reader := r.Body
 	feedData := RSSData{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {
-		log.Print("ERROR: ", err.Error())
+		log.Print("ERROR parsing ", url, ": ", err.Error())
 		return
 	}
 	// now transform the XML into our internal data structure

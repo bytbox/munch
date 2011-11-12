@@ -26,16 +26,15 @@ type AtomLink struct {
 
 func readAtom(feed *Feed) {
 	url := feed.Info.URL
-	log.Print(url)
 	r, err := client.Get(url)
 	if err != nil {
-		log.Print("ERROR: ", err.Error())
+		log.Print("ERROR fetching ", url, ": ", err.Error())
 	}
 	reader := r.Body
 	feedData := AtomFeed{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {
-		log.Print("ERROR: ", err.Error())
+		log.Print("ERROR parsing ", url, ": ", err.Error())
 		return
 	}
 
