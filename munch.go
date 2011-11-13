@@ -52,7 +52,7 @@ type Item struct {
 
 type TemplateData struct {
 	Config *Configuration
-	Feeds  *map[string]*Feed
+	Feeds  *[]*Feed
 	Unread []*Item
 }
 
@@ -62,8 +62,9 @@ const (
 )
 
 var (
-	Config Configuration
-	Feeds  map[string]*Feed
+	Config    Configuration
+	Feeds     map[string]*Feed
+	FeedList  []*Feed
 
 	page_template template.Template
 	client        http.Client
@@ -97,7 +98,10 @@ func main() {
 
 func InitTemplate() {
 	log.Print("Initializing Page Template")
-	page_template.Parse(page_template_string)
+	_, err := page_template.Parse(page_template_string)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ReadConfig() {
@@ -112,6 +116,22 @@ func ReadConfig() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+type SortableFeedList []*Feed
+
+func (is SortableFeedList) Len() int {
+	return len(is)
+}
+
+func (is SortableFeedList) Less(i, j int) bool {
+	a := is[i]
+	b := is[j]
+	return a.Info.Name < b.Info.Name
+}
+
+func (is SortableFeedList) Swap(i, j int) {
+	is[i], is[j] = is[j], is[i]
 }
 
 func InitCache() {
@@ -150,13 +170,17 @@ func InitCache() {
 			}
 			feed.Info.MainURL = "http://" + u.Host
 		}
+
+		FeedList = append(FeedList, feed)
 	}
+
+	sort.Sort(SortableFeedList(FeedList))
 }
 
 func HandleUpdates() {
 	pageBuffer := new(bytes.Buffer)
 	tmplData := TemplateData{}
-	tmplData.Feeds = &Feeds
+	tmplData.Feeds = &FeedList
 	tmplData.Config = &Config
 	err := page_template.Execute(pageBuffer, tmplData)
 	if err != nil {
@@ -196,7 +220,7 @@ func (is ItemList) Swap(i, j int) {
 	is[i], is[j] = is[j], is[i]
 }
 
-func getUnread(feeds *map[string]*Feed) []*Item {
+func getUnread(feeds *[]*Feed) []*Item {
 	items := ItemList{}
 	for _, feed := range *feeds {
 		for _, item := range feed.Items {
