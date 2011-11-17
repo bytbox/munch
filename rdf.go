@@ -10,8 +10,10 @@ func readRDF(feed *Feed) {
 	r, err := client.Get(url)
 	if err != nil {
 		log.Print("ERROR: ", err.Error())
+		return
 	}
 	_ = r.Body
+	defer r.Body.Close()
 
 	changed := false
 

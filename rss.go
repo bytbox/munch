@@ -34,6 +34,7 @@ func readRSS(feed *Feed) {
 		return
 	}
 	reader := r.Body
+	defer r.Body.Close()
 	feedData := RSSData{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {

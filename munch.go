@@ -91,7 +91,7 @@ func main() {
 
 	ticks := time.Tick(1e9 * Config.UpdateInterval)
 	for {
-		go ReadFeeds()
+		ReadFeeds()
 		<-ticks
 	}
 }
@@ -108,13 +108,14 @@ func ReadConfig() {
 	log.Print("Reading Config")
 	// Read config from ~/.munchrc
 	file, err := os.Open(path.Join(os.Getenv("HOME"), ".munchrc"))
+	defer file.Close()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("ERROR reading config: ", err.Error())
 	}
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&Config)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("ERROR decoding config: ",err.Error())
 	}
 }
 
@@ -149,7 +150,7 @@ func InitCache() {
 			decoder := json.NewDecoder(file)
 			err := decoder.Decode(feed)
 			if err != nil {
-				log.Fatal(err.Error())
+				log.Fatal("ERROR decoding cache \"", fPath, "\": ", err.Error())
 			}
 			for _, item := range feed.Items {
 				item.Feed = feed

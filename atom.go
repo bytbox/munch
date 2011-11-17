@@ -29,8 +29,10 @@ func readAtom(feed *Feed) {
 	r, err := client.Get(url)
 	if err != nil {
 		log.Print("ERROR fetching ", url, ": ", err.Error())
+		return
 	}
 	reader := r.Body
+	defer r.Body.Close()
 	feedData := AtomFeed{}
 	err = xml.Unmarshal(reader, &feedData)
 	if err != nil {
