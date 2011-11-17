@@ -1,3 +1,11 @@
+/*
+
+TODO handle signals
+
+TODO allow for simultaneous fetching by making each feed a goroutine
+
+*/
+
 package main
 
 import (
@@ -17,7 +25,7 @@ import (
 )
 
 const (
-	version = `0.1`
+	version = `0.2`
 )
 
 type Configuration struct {
