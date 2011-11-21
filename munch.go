@@ -13,6 +13,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -84,8 +85,19 @@ type FeedReader interface {
 
 }
 
+// flags
+var (
+	showVersion bool
+)
+
 func main() {
+	flag.BoolVar(&showVersion, "V", false, "show version information")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("Munch v%s\n", version)
+		return
+	}
 
 	updates = make(chan int)
 	content = make(chan string)
