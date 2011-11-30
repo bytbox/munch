@@ -10,7 +10,7 @@ var formats = []string{
 	time.RFC3339,
 }
 
-func parseTime(s string) (t *time.Time) {
+func parseTime(s string) (t time.Time) {
 	success := false
 	var err error
 	for _, fmt := range formats {
@@ -21,7 +21,7 @@ func parseTime(s string) (t *time.Time) {
 		}
 	}
 	if !success {
-		t = &time.Time{}
+		t = time.Time{}
 	}
 	return
 }

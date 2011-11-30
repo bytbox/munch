@@ -56,7 +56,7 @@ func readRSS(feed *Feed) {
 				Title:   itemData.Title,
 				GUID:    guid,
 				URL:     itemData.Link,
-				Date:    *t,
+				Date:    t,
 				Desc:    itemData.Description,
 				Content: itemData.Content,
 				Read:    false,

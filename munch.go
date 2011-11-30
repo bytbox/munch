@@ -109,7 +109,7 @@ func main() {
 	updates <- DoUpdate
 	go RunHTTPServer()
 
-	ticks := time.Tick(1e9 * Config.UpdateInterval)
+	ticks := time.Tick(time.Duration(int64(time.Second) * Config.UpdateInterval))
 	for {
 		ReadFeeds()
 		<-ticks
@@ -234,7 +234,7 @@ func (is ItemList) Len() int {
 func (is ItemList) Less(i, j int) bool {
 	a := is[i]
 	b := is[j]
-	return a.Date.Seconds() > b.Date.Seconds()
+	return a.Date.After(b.Date)
 }
 
 func (is ItemList) Swap(i, j int) {

@@ -53,7 +53,7 @@ func readAtom(feed *Feed) {
 				Title: itemData.Title,
 				GUID:  uid,
 				URL:   itemData.Link.Href,
-				Date:  *t,
+				Date:  t,
 				Desc:  itemData.Summary,
 				Read:  false,
 				ID:    id,
