@@ -7,17 +7,17 @@ import (
 )
 
 type AtomFeed struct {
-	Title string
-	Link  AtomLink
-	Entry []AtomItemData
+	Title string `xml:"title"`
+	Link  AtomLink `xml:"link"`
+	Entry []AtomItemData `xml:"entity"`
 }
 
 type AtomItemData struct {
-	ID      string
-	Link    AtomLink
-	Title   string
-	Updated string
-	Summary string
+	ID      string `xml:"id"`
+	Link    AtomLink `xml:"link"`
+	Title   string `xml:"title"`
+	Updated string `xml:"updated"`
+	Summary string `xml:"summary"`
 }
 
 type AtomLink struct {

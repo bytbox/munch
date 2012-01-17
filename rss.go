@@ -7,23 +7,23 @@ import (
 )
 
 type RSSData struct {
-	Channel Channel
+	Channel Channel `xml:"channel"`
 }
 
 type Channel struct {
-	Title       string
-	Link        string
-	Description string
-	Item        []RSSItemData
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	Description string `xml:"description"`
+	Item        []RSSItemData `xml:"item"`
 }
 
 type RSSItemData struct {
-	Title       string
-	Link        string
-	PubDate     string
-	GUID        string
-	Description string
-	Content     string
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	PubDate     string `xml:"pubdate"`
+	GUID        string `xml:"guid"`
+	Description string `xml:"description"`
+	Content     string `xml:"content"`
 }
 
 func readRSS(feed *Feed) {
