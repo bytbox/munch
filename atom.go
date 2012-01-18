@@ -9,7 +9,7 @@ import (
 type AtomFeed struct {
 	Title string `xml:"title"`
 	Link  AtomLink `xml:"link"`
-	Entry []AtomItemData `xml:"entity"`
+	Entry []AtomItemData `xml:"entry"`
 }
 
 type AtomItemData struct {

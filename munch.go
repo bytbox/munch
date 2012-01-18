@@ -88,10 +88,12 @@ type FeedReader interface {
 // flags
 var (
 	showVersion bool
+	httpsrv     string
 )
 
 func main() {
 	flag.BoolVar(&showVersion, "V", false, "show version information")
+	flag.StringVar(&httpsrv, "http", "localhost:8090", "location of http service")
 	flag.Parse()
 
 	if showVersion {

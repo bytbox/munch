@@ -20,7 +20,7 @@ type Channel struct {
 type RSSItemData struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
-	PubDate     string `xml:"pubdate"`
+	PubDate     string `xml:"pubDate"`
 	GUID        string `xml:"guid"`
 	Description string `xml:"description"`
 	Content     string `xml:"content"`
